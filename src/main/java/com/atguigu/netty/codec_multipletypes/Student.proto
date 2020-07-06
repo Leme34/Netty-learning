@@ -1,0 +1,35 @@
+syntax = "proto3";
+option optimize_for = SPEED; // 加快解析
+option java_package = "com.atguigu.netty.codec2";   //指定生成到哪个包下
+option java_outer_classname = "MyDataInfo"; // 外部类名, 文件名
+
+//protobuf 可以使用 message 管理其他的message
+message MyMessage {
+
+  //定义一个枚举类型，proto3要求enum的编号从0开始
+  enum DataType {
+    StudentType = 0;
+    WorkerType = 1;
+  }
+
+  //1表示data_type是枚举类DataType的第1个属性，用来标识当前传输的是哪一个message类型
+  DataType data_type = 1;
+
+  //oneof语法表示每次枚举类型最多只能出现其中的一个, 从而节省空间，2和3分别表示DataType的第2,3个属性
+  oneof dataBody {
+    Student student = 2;
+    Worker worker = 3;
+  }
+
+}
+
+//Student类的属性
+message Student {
+  int32 id = 1;
+  string name = 2;
+}
+//Worker类的属性
+message Worker {
+  string name = 1;
+  int32 age = 2;
+}
