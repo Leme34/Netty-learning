@@ -24,8 +24,8 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 
-        //=====比如这里我们有一个耗时非常长的业务，为了避免阻塞，应该提交到该 channel 对应的 NIOEventLoop 的 taskQueue 中异步执行========
-        //场景1：若耗时业务是普通任务
+        //=====比如这里我们有一个非常耗时的业务，为了避免阻塞，应该提交到该 channel 对应的 NIOEventLoop 的 taskQueue 中排队执行========
+        //场景1：若耗时业务是普通任务，这种方法把耗时任务提交到任务队列中，但因为NioEventLoop本身继承了SingleThreadEventExecutor，所以这样提交的任务都是同一个线程排队处理的
         ctx.channel().eventLoop().execute(() -> {
             try {
                 Thread.sleep(5 * 1000);
@@ -46,7 +46,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
             }
         });
 
-        //场景2：若耗时业务是定时任务，该任务应被提交到 scheduleTaskQueue 中（与上边的taskQueue）
+        //场景2：若耗时业务是定时任务，该任务应被提交到 scheduleTaskQueue 中
         ctx.channel().eventLoop().schedule(() -> {
             try {
                 Thread.sleep(5 * 1000);

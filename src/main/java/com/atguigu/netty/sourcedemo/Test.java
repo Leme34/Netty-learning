@@ -1,4 +1,4 @@
-package com.atguigu.netty.source.echo;
+package com.atguigu.netty.sourcedemo;
 
 public class Test {
     public static void main(String[] args) throws Exception {

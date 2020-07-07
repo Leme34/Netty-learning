@@ -13,15 +13,12 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-package com.atguigu.netty.source.echo2;
+package com.atguigu.netty.sourcedemo;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 
 /**
  * Handler implementation for the echo client.  It initiates the ping-pong
@@ -44,22 +41,12 @@ public class EchoClientHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
-
-        //给服务器发消息
-        ctx.writeAndFlush(Unpooled.copiedBuffer(("hello i am client").getBytes()));
-
-
+        ctx.writeAndFlush(firstMessage);
     }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
-
-        //接收服务器消息
-        ByteBuf buf = (ByteBuf) msg;
-        byte[] bytes = new byte[buf.readableBytes()];
-        buf.readBytes(bytes);
-        String s = new String(bytes, StandardCharsets.UTF_8);
-        System.out.println("s=" + s);
+        ctx.write(msg);
     }
 
     @Override
@@ -70,7 +57,7 @@ public class EchoClientHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         // Close the connection when an exception is raised.
-        //cause.printStackTrace();
+        cause.printStackTrace();
         ctx.close();
     }
 }
